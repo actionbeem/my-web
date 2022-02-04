@@ -1,0 +1,173 @@
+import React, { useState } from "react";
+import { useRef, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+
+const Slider = () => {
+  const [slideItems, setSlideItems] = useState(slideDatas);
+  const [currentSlideId, setCurrentSlideId] = useState(0);
+
+  const onClickItem = (id: number) => {
+    // ...
+  };
+
+  const scrollRef = useRef();
+
+  useEffect(() => {
+    const el: any = scrollRef.current;
+
+    if (el) {
+      const onWheel = (e: any) => {
+        if (e.deltaY == 0) return;
+        e.preventDefault();
+        el.scrollTo({
+          left: el.scrollLeft + e.deltaY,
+          // behavior: "smooth",
+        });
+
+        if (el.scrollLeft > 200 && el.scrollLeft < 400) {
+          if (currentSlideId === 2) return;
+          setCurrentSlideId(2);
+        }
+        if (el.scrollLeft > 400 && el.scrollLeft < 600) {
+          if (currentSlideId === 3) return;
+          setCurrentSlideId(3);
+        }
+        if (el.scrollLeft > 600 && el.scrollLeft < 800) {
+          if (currentSlideId === 4) return;
+          setCurrentSlideId(4);
+        }
+      };
+      el.addEventListener("wheel", onWheel);
+      return () => el.removeEventListener("wheel", onWheel);
+    }
+  }, [currentSlideId]);
+
+  useEffect(() => {
+    document.body.addEventListener("wheel", (e: any) => {
+      console.log("wheel : ", e);
+    });
+  }, []);
+
+  return (
+    <Container ref={scrollRef as any}>
+      <ul className="slide-list">
+        {slideItems.map((slide) => (
+          <li
+            key={slide.id}
+            className={`slide-item ${
+              slide.id === currentSlideId ? "focus" : ""
+            }`}
+          >
+            <div
+              className="slide-content"
+              onClick={() => onClickItem(slide.id)}
+            >
+              {/* {slide.text} */}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  );
+};
+
+const slideDatas = [
+  { id: 1, text: "aaa" },
+  { id: 2, text: "bbb" },
+  { id: 3, text: "ccc" },
+  { id: 4, text: "ddd" },
+  { id: 5, text: "eee" },
+  { id: 6, text: "fff" },
+  { id: 7, text: "ggg" },
+  { id: 8, text: "hhh" },
+];
+
+const slideFocusOn = keyframes`
+  0% {
+    transform: rotateY(0deg);
+    width: 300px;
+    height: 300px;        
+  }
+  50% {
+    transform: rotateY(15deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+    width: 350px;
+    height: 350px;        
+  }
+`;
+
+const slideFocusOff = keyframes`
+  0% {
+    transform: rotateY(0deg);
+    width: 350px;
+    height: 350px;            
+  }
+  50% {
+    transform: rotateY(15deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+    width: 300px;
+    height: 300px;        
+  }
+`;
+
+const Container = styled.div`
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+
+  .test-btn {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    z-index: 10;
+    background-color: #ccc;
+  }
+
+  .slide-list {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+
+    .slide-item {
+      padding: 20px;
+      perspective: 800px;
+
+      &:not(:first-child) {
+        .slide-content {
+          width: 300px;
+          height: 300px;
+          border-radius: 10px;
+          background-color: #fff;
+          box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+
+          animation-duration: 0.3s;
+          animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+          animation-name: ${slideFocusOff};
+          animation-fill-mode: forwards;
+        }
+      }
+
+      &:first-child {
+        .slide-content {
+          width: 500px;
+        }
+      }
+
+      &.focus {
+        .slide-content {
+          animation-duration: 0.3s;
+          animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+          animation-name: ${slideFocusOn};
+          animation-fill-mode: forwards;
+        }
+      }
+    }
+  }
+`;
+
+export default Slider;
