@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 
-const Slider = () => {
+interface IProps {
+  setIsActiveParentScroll: (active: boolean) => void;
+  isActiveChildScroll: boolean;
+}
+
+const Slider: React.FC<IProps> = ({
+  setIsActiveParentScroll,
+  isActiveChildScroll,
+}) => {
   const [slideItems, setSlideItems] = useState(slideDatas);
   const [currentSlideId, setCurrentSlideId] = useState(0);
 
@@ -12,41 +20,42 @@ const Slider = () => {
 
   const scrollRef = useRef();
 
-  useEffect(() => {
-    const el: any = scrollRef.current;
+  // useEffect(() => {
+  //   if (!isActiveChildScroll) return;
 
-    if (el) {
-      const onWheel = (e: any) => {
-        if (e.deltaY == 0) return;
-        e.preventDefault();
-        el.scrollTo({
-          left: el.scrollLeft + e.deltaY,
-          // behavior: "smooth",
-        });
+  //   const el: any = scrollRef.current;
 
-        if (el.scrollLeft > 200 && el.scrollLeft < 400) {
-          if (currentSlideId === 2) return;
-          setCurrentSlideId(2);
-        }
-        if (el.scrollLeft > 400 && el.scrollLeft < 600) {
-          if (currentSlideId === 3) return;
-          setCurrentSlideId(3);
-        }
-        if (el.scrollLeft > 600 && el.scrollLeft < 800) {
-          if (currentSlideId === 4) return;
-          setCurrentSlideId(4);
-        }
-      };
-      el.addEventListener("wheel", onWheel);
-      return () => el.removeEventListener("wheel", onWheel);
-    }
-  }, [currentSlideId]);
+  //   if (el) {
+  //     const onWheel = (e: any) => {
+  //       if (e.deltaY == 0) return;
+  //       e.preventDefault();
+  //       el.scrollTo({
+  //         left: el.scrollLeft + e.deltaY,
+  //         // behavior: "smooth",
+  //       });
+  //       console.log("slide scroll : ", el.scrollLeft);
 
-  useEffect(() => {
-    document.body.addEventListener("wheel", (e: any) => {
-      console.log("wheel : ", e);
-    });
-  }, []);
+  //       if (el.scrollLeft === 0) {
+  //         setIsActiveParentScroll(true);
+  //         setCurrentSlideId(0);
+  //       }
+  //       if (el.scrollLeft > 200 && el.scrollLeft < 400) {
+  //         if (currentSlideId === 2) return;
+  //         setCurrentSlideId(2);
+  //       }
+  //       if (el.scrollLeft > 400 && el.scrollLeft < 600) {
+  //         if (currentSlideId === 3) return;
+  //         setCurrentSlideId(3);
+  //       }
+  //       if (el.scrollLeft > 600 && el.scrollLeft < 800) {
+  //         if (currentSlideId === 4) return;
+  //         setCurrentSlideId(4);
+  //       }
+  //     };
+  //     el.addEventListener("wheel", onWheel);
+  //     return () => el.removeEventListener("wheel", onWheel);
+  //   }
+  // }, [currentSlideId, isActiveChildScroll]);
 
   return (
     <Container ref={scrollRef as any}>
@@ -118,7 +127,12 @@ const Container = styled.div`
   height: 100vh;
   display: flex;
   align-items: center;
-  overflow-x: auto;
+  margin-left: 300px;
+  /* overflow-x: hidden; */
+  /* -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  } */
 
   .test-btn {
     position: fixed;
@@ -152,11 +166,11 @@ const Container = styled.div`
         }
       }
 
-      &:first-child {
+      /* &:first-child {
         .slide-content {
           width: 500px;
         }
-      }
+      } */
 
       &.focus {
         .slide-content {
