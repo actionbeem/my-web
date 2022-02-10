@@ -4,11 +4,13 @@ import styled, { keyframes } from "styled-components";
 
 interface IProps {
   setIsActiveParentScroll: (active: boolean) => void;
+  setIsActiveChildScroll: (active: boolean) => void;
   isActiveChildScroll: boolean;
 }
 
 const Slider: React.FC<IProps> = ({
   setIsActiveParentScroll,
+  setIsActiveChildScroll,
   isActiveChildScroll,
 }) => {
   const [slideItems, setSlideItems] = useState(slideDatas);
@@ -20,42 +22,48 @@ const Slider: React.FC<IProps> = ({
 
   const scrollRef = useRef();
 
-  // useEffect(() => {
-  //   if (!isActiveChildScroll) return;
+  useEffect(() => {
+    const el: any = scrollRef.current;
 
-  //   const el: any = scrollRef.current;
+    if (el) {
+      const onWheel = (e: any) => {
+        if (!isActiveChildScroll) return;
 
-  //   if (el) {
-  //     const onWheel = (e: any) => {
-  //       if (e.deltaY == 0) return;
-  //       e.preventDefault();
-  //       el.scrollTo({
-  //         left: el.scrollLeft + e.deltaY,
-  //         // behavior: "smooth",
-  //       });
-  //       console.log("slide scroll : ", el.scrollLeft);
+        if (e.deltaY == 0) return;
+        e.preventDefault();
+        el.scrollTo({
+          left: el.scrollLeft + e.deltaY,
+          // behavior: "smooth",
+        });
+        console.log("slide scroll : ", el.scrollLeft);
 
-  //       if (el.scrollLeft === 0) {
-  //         setIsActiveParentScroll(true);
-  //         setCurrentSlideId(0);
-  //       }
-  //       if (el.scrollLeft > 200 && el.scrollLeft < 400) {
-  //         if (currentSlideId === 2) return;
-  //         setCurrentSlideId(2);
-  //       }
-  //       if (el.scrollLeft > 400 && el.scrollLeft < 600) {
-  //         if (currentSlideId === 3) return;
-  //         setCurrentSlideId(3);
-  //       }
-  //       if (el.scrollLeft > 600 && el.scrollLeft < 800) {
-  //         if (currentSlideId === 4) return;
-  //         setCurrentSlideId(4);
-  //       }
-  //     };
-  //     el.addEventListener("wheel", onWheel);
-  //     return () => el.removeEventListener("wheel", onWheel);
-  //   }
-  // }, [currentSlideId, isActiveChildScroll]);
+        if (el.scrollLeft === 0) {
+          // setIsActiveParentScroll(true);
+          // setIsActiveChildScroll(false);
+          setCurrentSlideId(0);
+        }
+        if (el.scrollLeft > 200 && el.scrollLeft < 400) {
+          if (currentSlideId === 2) return;
+          setCurrentSlideId(2);
+        }
+        if (el.scrollLeft > 400 && el.scrollLeft < 600) {
+          if (currentSlideId === 3) return;
+          setCurrentSlideId(3);
+        }
+        if (el.scrollLeft > 600 && el.scrollLeft < 800) {
+          if (currentSlideId === 4) return;
+          setCurrentSlideId(4);
+        }
+      };
+      el.addEventListener("wheel", onWheel);
+      return () => el.removeEventListener("wheel", onWheel);
+    }
+  }, [
+    currentSlideId,
+    setIsActiveParentScroll,
+    setIsActiveChildScroll,
+    isActiveChildScroll,
+  ]);
 
   return (
     <Container ref={scrollRef as any}>
