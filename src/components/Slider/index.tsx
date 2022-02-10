@@ -33,13 +33,12 @@ const Slider: React.FC<IProps> = ({
         e.preventDefault();
         el.scrollTo({
           left: el.scrollLeft + e.deltaY,
-          // behavior: "smooth",
         });
         console.log("slide scroll : ", el.scrollLeft);
 
         if (el.scrollLeft === 0) {
-          // setIsActiveParentScroll(true);
-          // setIsActiveChildScroll(false);
+          setIsActiveParentScroll(true);
+          setIsActiveChildScroll(false);
           setCurrentSlideId(0);
         }
         if (el.scrollLeft > 200 && el.scrollLeft < 400) {
@@ -66,7 +65,7 @@ const Slider: React.FC<IProps> = ({
   ]);
 
   return (
-    <Container ref={scrollRef as any}>
+    <Container ref={scrollRef as any} isActiveScroll={isActiveChildScroll}>
       <ul className="slide-list">
         {slideItems.map((slide) => (
           <li
@@ -131,7 +130,7 @@ const slideFocusOff = keyframes`
   }
 `;
 
-const Container = styled.div`
+const Container = styled.div<{ isActiveScroll: boolean }>`
   height: 100vh;
   display: flex;
   align-items: center;
@@ -141,6 +140,8 @@ const Container = styled.div`
   &::-webkit-scrollbar {
     display: none;
   } */
+
+  overflow-x: ${({ isActiveScroll }) => (isActiveScroll ? "auto" : "visible")};
 
   .test-btn {
     position: fixed;
