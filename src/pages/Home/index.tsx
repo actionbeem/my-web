@@ -13,16 +13,23 @@ const Home: React.FC = () => {
     if (scrollWrapEl) {
       const wheelScroll = (e: any) => {
         if (isActiveParentScroll) {
-          scrollWrapEl.scrollTo({
-            left: scrollWrapEl.scrollLeft + e.deltaY,
-            // behavior: "smooth",
-          });
-          console.log("home scroll : ", scrollWrapEl.scrollLeft);
-
-          if (scrollWrapEl.scrollLeft > 200) {
+          if (e.deltaY > 0) {
             setIsActiveParentScroll(false);
-            setIsActiveChildScroll(true);
+            setTimeout(() => {
+              setIsActiveChildScroll(true);
+            }, 100);
           }
+          // scrollWrapEl.scrollTo({
+          //   left: scrollWrapEl.scrollLeft + e.deltaY,
+          //   // behavior: "smooth",
+          // });
+          // console.log("home scroll : ", scrollWrapEl.scrollLeft);
+          // if (scrollWrapEl.scrollLeft > 200) {
+          //   setIsActiveParentScroll(false);
+          //   setTimeout(() => {
+          //     setIsActiveChildScroll(true);
+          //   }, 500);
+          // }
         }
       };
 
@@ -40,6 +47,7 @@ const Home: React.FC = () => {
       <Slider
         setIsActiveParentScroll={setIsActiveParentScroll}
         setIsActiveChildScroll={setIsActiveChildScroll}
+        isActiveParentScroll={isActiveParentScroll}
         isActiveChildScroll={isActiveChildScroll}
       />
     </Container>

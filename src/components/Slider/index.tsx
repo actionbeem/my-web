@@ -5,12 +5,14 @@ import styled, { keyframes } from "styled-components";
 interface IProps {
   setIsActiveParentScroll: (active: boolean) => void;
   setIsActiveChildScroll: (active: boolean) => void;
+  isActiveParentScroll: boolean;
   isActiveChildScroll: boolean;
 }
 
 const Slider: React.FC<IProps> = ({
   setIsActiveParentScroll,
   setIsActiveChildScroll,
+  isActiveParentScroll,
   isActiveChildScroll,
 }) => {
   const [slideItems, setSlideItems] = useState(slideDatas);
@@ -20,10 +22,10 @@ const Slider: React.FC<IProps> = ({
     // ...
   };
 
-  const scrollRef = useRef();
+  const scrollRef = useRef<HTMLDivElement>();
 
   useEffect(() => {
-    const el: any = scrollRef.current;
+    const el = scrollRef.current;
 
     if (el) {
       const onWheel = (e: any) => {
@@ -63,6 +65,14 @@ const Slider: React.FC<IProps> = ({
     setIsActiveChildScroll,
     isActiveChildScroll,
   ]);
+
+  useEffect(() => {
+    if (!isActiveParentScroll) {
+      scrollRef.current?.scrollTo({
+        left: 0,
+      });
+    }
+  }, [isActiveParentScroll]);
 
   return (
     <Container ref={scrollRef as any} isActiveScroll={isActiveChildScroll}>
@@ -134,14 +144,14 @@ const Container = styled.div<{ isActiveScroll: boolean }>`
   height: 100vh;
   display: flex;
   align-items: center;
-  margin-left: 300px;
+  margin-left: ${({ isActiveScroll }) => (isActiveScroll ? "0" : "300px")};
   /* overflow-x: hidden; */
   /* -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none;
   } */
-
   overflow-x: ${({ isActiveScroll }) => (isActiveScroll ? "auto" : "visible")};
+  transition: all 0.5s ease-in-out;
 
   .test-btn {
     position: fixed;
