@@ -38,4 +38,3 @@ jobs:
           tags: test-my-web:latest
           # tags: ${{ steps.docker_meta.outputs.tags }}
           # labels: ${{ steps.docker_meta.outputs.labels }}
-          ###
