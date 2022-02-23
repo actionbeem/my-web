@@ -13,11 +13,12 @@ const Home: React.FC = () => {
     if (scrollWrapEl) {
       const wheelScroll = (e: any) => {
         if (isActiveParentScroll) {
+          console.log("delta : ", e.deltaY);
           if (e.deltaY > 0) {
             setIsActiveParentScroll(false);
             setTimeout(() => {
               setIsActiveChildScroll(true);
-            }, 100);
+            }, 500);
           }
           // scrollWrapEl.scrollTo({
           //   left: scrollWrapEl.scrollLeft + e.deltaY,
