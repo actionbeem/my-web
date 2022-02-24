@@ -39,6 +39,16 @@ jobs:
     name: continuos deploy
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          source: "docker-compose.yml"
+          target: "/home/ec2-user/"
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master # ec2 ssh 접속 후 docker 실행
         with:
@@ -46,8 +56,4 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_KEY }}
           port: 22
-          script: |
-            docker pull actionbeem/actions-test:${{ github.sha }}
-            docker stop my-web
-            docker rm my-web
-            docker run -d --name my-web -p 80:80 actionbeem/actions-test:${{ github.sha }}
+          script: "docker-compose pull && docker-compose up -d --build"
