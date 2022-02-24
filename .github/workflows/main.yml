@@ -25,6 +25,7 @@ jobs:
         run: npm run test
 
   build-image:
+    needs: test-frontend
     runs-on: ubuntu-latest
 
     steps:
