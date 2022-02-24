@@ -45,6 +45,7 @@ const Home: React.FC = () => {
 
   return (
     <Container ref={homeRef as any}>
+      <p>aaa</p>
       <Slider
         setIsActiveParentScroll={setIsActiveParentScroll}
         setIsActiveChildScroll={setIsActiveChildScroll}
