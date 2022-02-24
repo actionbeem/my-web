@@ -1,7 +1,7 @@
 version: "3"
 services:
   frontend: # 빌드될 이미지명. 폴더명 + 이미지명으로 생성됨.
-    image: my-web:{$TAG}
+    image: my-web
     container_name: my-web-con
     build:
       dockerfile: Dockerfile # dockerfile이름
