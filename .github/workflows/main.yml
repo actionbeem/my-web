@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - name: Check Out Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2 # git 소스 내려받기
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v1 # docker login
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -24,12 +24,12 @@ jobs:
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v2 # docker image build & push
         with:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/actions-test:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/actions-test:${{ github.sha }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -39,24 +39,15 @@ jobs:
     name: continuos deploy
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@master
-      # - name: copy file via ssh password
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.EC2_HOST }}
-      #     username: ec2-user
-      #     key: ${{ secrets.EC2_KEY }}
-      #     port: 22
-      #     source: "docker-compose.yaml"
-      #     target: "/home/ec2-user/"
       - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@master # ec2 ssh 접속 후 docker 실행
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_KEY }}
           port: 22
-          # script: "docker-compose pull && docker-compose up -d"
           script: |
-            docker pull actionbeem/actions-test:latest
-            docker run -d -p 8080:80 actionbeem/actions-test
+            docker pull actionbeem/actions-test:${{ github.sha }}
+            docker stop my-web
+            docker rm my-web
+            docker run -d --name my-web -p 80:80 actionbeem/actions-test:${{ github.sha }}
