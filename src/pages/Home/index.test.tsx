@@ -3,6 +3,6 @@ import Home from ".";
 
 test("renders learn react link", () => {
   render(<Home />);
-  const testElement = screen.getByText(/test/i);
+  const testElement = screen.getByText(/test sample/i);
   expect(testElement).toBeInTheDocument();
 });
